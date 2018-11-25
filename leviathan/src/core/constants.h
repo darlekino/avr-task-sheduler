@@ -1,6 +1,11 @@
 #ifndef _CONSTANTS_H_
 #define _CONSTANTS_H_
 
+#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+
+#define ENABLE_INTERRUPTS 	asm volatile("sei");
+#define DISABLE_INTERRUPTS 	asm volatile("cli");
+
 #define SUCCESS_RESULT  0
 #define FAILED_RESULT  -1
 

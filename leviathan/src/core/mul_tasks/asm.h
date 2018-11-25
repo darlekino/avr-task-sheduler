@@ -6,12 +6,8 @@
 #include <avr/interrupt.h>
 #include "ltask.h"
 
-uint8_t *linitialize_stack(uint8_t* top_of_stack, ltask_fn fn);
 void los_non_savable_yield(void);
 void los_asm_yield_from_tick(void);
-
-#define ENABLE_INTERRUPTS 	asm volatile("sei");
-#define DISABLE_INTERRUPTS 	asm volatile("cli");
 
 #define SAVE_CONTEXT                       	   \
 	asm volatile (                             \

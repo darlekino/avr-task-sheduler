@@ -1,30 +1,13 @@
 #include <stdlib.h>
+#include "../time/timers.h"
 #include "sheduler.h"
 #include "asm.h"
 
-volatile ltask_t *current_ltask = NULL;
-volatile ltask_t *os_ltask = NULL;
+ltask_t *current_ltask = NULL;
 
-static void idle_ltask(void)
+void sheduler_init(ltask_t main_ltask)
 {
-    while (1);
-}
-
-void sheduler_init(void)
-{
-    ltask_run(idle_ltask, IDLE_LTASK_STACK);
-}
-
-ltask_t *ltask_create(ltask_fn fn, uint8_t *stack, uint8_t* top_of_stack)
-{
-	static int counter = 0;
-	ltask_t *ltask = (ltask_t *)malloc(sizeof(ltask_t));
-	ltask->next = NULL;
-	ltask->stack = stack;
-	ltask->top_of_stack = top_of_stack;
-	ltask->state = LTASK_READY;
-	ltask->num = counter++;
-	return ltask;
+    ltask_add_to_sheduler(main_ltask);
 }
 
 void ltask_add_to_sheduler(ltask_t *ltask)
@@ -36,7 +19,7 @@ void ltask_add_to_sheduler(ltask_t *ltask)
 	}
 	else
 	{
-		for(volatile ltask_t *lt = current_ltask;; lt = lt->next)
+		for(ltask_t *lt = current_ltask;; lt = lt->next)
 		{
 			if (lt->next == current_ltask)
 			{
@@ -79,8 +62,29 @@ void ltask_exit(void)
     los_non_savable_yield();
 }
 
-void ltask_destroy(ltask_t *ltask)
+uint8_t *linitialize_stack(uint8_t* top_of_stack, ltask_fn fn)
 {
-	free(ltask->stack);
-    free(ltask);
+	uint16_t address = 0;
+
+	// put ltask_exit on stack so when task exits by ret(i) instruction it will go "back" to that function
+	address = (uint16_t)ltask_exit;
+	top_of_stack[0]  = (address >> 0) & 0xff;
+	top_of_stack[-1] = (address >> 8) & 0xff;
+
+	// make space for pc, sreg, and 32 register
+	address = (uint16_t)fn;
+	top_of_stack[-2] = (address >> 0) & 0xff;
+	top_of_stack[-3] = (address >> 8) & 0xff;
+
+	// R0 and SREG (0x80 - interrupts enabled) registers
+	top_of_stack[-4] = 0x00;
+	top_of_stack[-5] = 0x80;
+	
+	// R1 - R31
+	for (int i = -6; i > -37; i--)
+	{
+		top_of_stack[i] = 0;
+	}
+	
+	return &top_of_stack[-37];
 }

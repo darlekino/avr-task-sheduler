@@ -137,22 +137,31 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\core\asm.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\core\asm.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\core\constants.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\core\ltask.h">
+    <Compile Include="src\core\mul_tasks\asm.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\core\sheduler.c">
+    <Compile Include="src\core\mul_tasks\asm.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\core\sheduler.h">
+    <Compile Include="src\core\mul_tasks\ltask.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\core\mul_tasks\ltask.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\core\mul_tasks\sheduler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\core\mul_tasks\sheduler.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\core\time\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\core\time\timers.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\leviathan.c">
@@ -165,6 +174,8 @@
   <ItemGroup>
     <Folder Include="src" />
     <Folder Include="src\core" />
+    <Folder Include="src\core\mul_tasks" />
+    <Folder Include="src\core\time" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

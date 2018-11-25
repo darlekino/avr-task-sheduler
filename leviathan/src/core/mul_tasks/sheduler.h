@@ -8,13 +8,10 @@
 #define TASKS_LIMIT 8
 #endif
 
-#define IDLE_LTASK_STACK 64
-
-extern volatile ltask_t *current_ltask;
+extern ltask_t *current_ltask;
 
 void sheduler_init(void);
-ltask_t *ltask_create(ltask_fn fn, uint8_t *stack, uint8_t *top_of_stack);
-void ltask_destroy(ltask_t *ltask);
+uint8_t *linitialize_stack(uint8_t* top_of_stack, ltask_fn fn);
 void ltask_add_to_sheduler(ltask_t *ltask);
 void ltask_exit(void);
 void context_switch(void);
