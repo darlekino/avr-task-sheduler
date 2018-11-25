@@ -15,8 +15,13 @@ void task01(void);
 void task02(void);
 void task03(void);
 
+uint8_t stack_of_task01[64];
+uint8_t stack_of_task02[64];
+
 void task01()
 {
+	//ltask_run_v2(task02, 64);
+	ltask_run_v2(task02, &stack_of_task02[63]);
 	#define LED_PIN 2
 	static unsigned long last_time = 0;
 	static int led_on = 1;
@@ -26,7 +31,7 @@ void task01()
 	while(1) 
 	{
 		unsigned int current = millis();
-		if (current - last_time >= 2000)
+		if (current - last_time >= 500)
 		{
 			if(led_on)
 			{
@@ -53,7 +58,7 @@ void task02()
 	while (1)
 	{
 		unsigned int current = millis();
-		if (current - last_time >= 2000)
+		if (current - last_time >= 500)
 		{
 			if(led_on)
 			{
@@ -82,7 +87,7 @@ void task03()
 	while (1)
 	{
 		unsigned int current = millis();
-		if (current - last_time >= 2000)
+		if (current - last_time >= 500)
 		{
 			if(led_on)
 			{
@@ -103,8 +108,11 @@ int main(void)
 {	
 	los_init();
 	
-	ltask_run(task01, 128);
-	ltask_run(task02, 128);
+	//ltask_run(task01, 255);
+	//ltask_run(task02, 255);
+	
+	ltask_run_v2(task01, &stack_of_task01[63]);
+	//ltask_run_v2(task02, &stack_of_task02[63]);
 	
 	los_run();
     return 0;

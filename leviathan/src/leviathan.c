@@ -40,6 +40,28 @@ unsigned long millis()
 	return m;
 }
 
+void ltask_run(ltask_fn fn, uint8_t stack_size)
+{
+	DISABLE_INTERRUPTS
+
+	uint8_t *top_of_stack = linitialize_stack((uint8_t *)malloc(stack_size) + stack_size - 1, fn);
+	ltask_t *ltask = ltask_create(fn, top_of_stack);
+	ltask_add_to_sheduler(ltask);
+
+	ENABLE_INTERRUPTS
+}
+
+void ltask_run_v2(ltask_fn fn, uint8_t* top_of_stack)
+{
+	DISABLE_INTERRUPTS
+
+	top_of_stack = linitialize_stack(top_of_stack, fn);
+	ltask_t *ltask = ltask_create(fn, top_of_stack);
+	ltask_add_to_sheduler(ltask);
+
+	ENABLE_INTERRUPTS
+}
+
 void init_timer0() 
 {
 	//F_CPU/64  1ms (register 8bit)
@@ -61,8 +83,8 @@ void init_timer1()
 void los_init(void)
 {
     sheduler_init();
+
     init_timer0();
-	
 	init_timer1();
 }
 
@@ -72,7 +94,4 @@ void los_run(void)
 	
 	// yield without saving the context
 	los_non_savable_yield();
-	
-	// should never get here
-	//return;
 }
