@@ -1,7 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "src/leviathan.h"
-#include "src/core/asm.h"
 
 /*
 nano
@@ -20,8 +19,6 @@ uint8_t stack_of_task02[64];
 
 void task01()
 {
-	//ltask_run_v2(task02, 64);
-	ltask_run_v2(task02, &stack_of_task02[63]);
 	#define LED_PIN 2
 	static unsigned long last_time = 0;
 	static int led_on = 1;
@@ -108,12 +105,9 @@ int main(void)
 {	
 	los_init();
 	
-	//ltask_run(task01, 255);
-	//ltask_run(task02, 255);
-	
-	ltask_run_v2(task01, &stack_of_task01[63]);
-	//ltask_run_v2(task02, &stack_of_task02[63]);
-	
+	ltask_run(task01, 255);
+	ltask_run(task02, 255);
+
 	los_run();
     return 0;
 }

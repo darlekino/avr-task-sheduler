@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
 #include "leviathan.h"
 #include "core/sheduler.h"
 #include "core/asm.h"
@@ -44,19 +45,9 @@ void ltask_run(ltask_fn fn, uint8_t stack_size)
 {
 	DISABLE_INTERRUPTS
 
-	uint8_t *top_of_stack = linitialize_stack((uint8_t *)malloc(stack_size) + stack_size - 1, fn);
-	ltask_t *ltask = ltask_create(fn, top_of_stack);
-	ltask_add_to_sheduler(ltask);
-
-	ENABLE_INTERRUPTS
-}
-
-void ltask_run_v2(ltask_fn fn, uint8_t* top_of_stack)
-{
-	DISABLE_INTERRUPTS
-
-	top_of_stack = linitialize_stack(top_of_stack, fn);
-	ltask_t *ltask = ltask_create(fn, top_of_stack);
+	uint8_t *stack = (uint8_t *)malloc(stack_size);
+	uint8_t *top_of_stack = linitialize_stack(stack + stack_size - 1, fn);
+	ltask_t *ltask = ltask_create(fn, stack, top_of_stack);
 	ltask_add_to_sheduler(ltask);
 
 	ENABLE_INTERRUPTS

@@ -3,6 +3,7 @@
 #include "asm.h"
 
 volatile ltask_t *current_ltask = NULL;
+volatile ltask_t *os_ltask = NULL;
 
 static void idle_ltask(void)
 {
@@ -14,11 +15,12 @@ void sheduler_init(void)
     ltask_run(idle_ltask, IDLE_LTASK_STACK);
 }
 
-ltask_t *ltask_create(ltask_fn fn, uint8_t* top_of_stack)
+ltask_t *ltask_create(ltask_fn fn, uint8_t *stack, uint8_t* top_of_stack)
 {
 	static int counter = 0;
 	ltask_t *ltask = (ltask_t *)malloc(sizeof(ltask_t));
 	ltask->next = NULL;
+	ltask->stack = stack;
 	ltask->top_of_stack = top_of_stack;
 	ltask->state = LTASK_READY;
 	ltask->num = counter++;
@@ -79,6 +81,6 @@ void ltask_exit(void)
 
 void ltask_destroy(ltask_t *ltask)
 {
-	//free(ltask->top_of_stack);
+	free(ltask->stack);
     free(ltask);
 }

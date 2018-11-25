@@ -13,7 +13,7 @@
 extern volatile ltask_t *current_ltask;
 
 void sheduler_init(void);
-ltask_t *ltask_create(ltask_fn fn, uint8_t *top_of_stack);
+ltask_t *ltask_create(ltask_fn fn, uint8_t *stack, uint8_t *top_of_stack);
 void ltask_destroy(ltask_t *ltask);
 void ltask_add_to_sheduler(ltask_t *ltask);
 void ltask_exit(void);
