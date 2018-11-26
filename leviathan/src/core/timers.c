@@ -1,6 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "../constants.h"
+#include "common/constants.h"
 #include "timers.h"
 
 volatile unsigned long timer0_millis = 0;

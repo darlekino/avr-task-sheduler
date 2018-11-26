@@ -4,13 +4,16 @@
 
 ltask_t *ltask_create(uint8_t *stack, uint8_t* top_of_stack)
 {
-	static int counter = 0;
+	static uint8_t counter = 0;
+
 	ltask_t *ltask = (ltask_t *)malloc(sizeof(ltask_t));
+	
 	ltask->next = NULL;
 	ltask->stack = stack;
 	ltask->top_of_stack = top_of_stack;
 	ltask->state = LTASK_READY;
-	ltask->num = counter++;
+	ltask->id = counter++;
+
 	return ltask;
 }
 

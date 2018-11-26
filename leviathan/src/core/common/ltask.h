@@ -1,7 +1,7 @@
 #ifndef _LTASK_H_
 #define _LTASK_H_
 
-#include "../constants.h"
+#include "constants.h"
 
 typedef enum { LTASK_READY, LTASK_WAIT, LTASK_ACTIVE } ltask_state_t;
 
@@ -11,7 +11,7 @@ typedef struct ltask_t
     volatile uint8_t *stack;
     volatile ltask_state_t state;
     volatile struct ltask_t *next;
-	volatile int num;
+	volatile uint8_t id;
 } ltask_t;
 
 typedef void (*ltask_fn)(void);

@@ -1,11 +1,23 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <stdlib.h>
-#include "../time/timers.h"
 #include "sheduler.h"
-#include "asm.h"
+#include "common/asm.h"
 
 ltask_t *current_ltask = NULL;
 
-void sheduler_init(ltask_t main_ltask)
+static void ltask_exit(void);
+static void lcontext_switch(void);
+static void los_non_savable_yield(void);
+static void los_asm_yield_from_tick(void);
+
+void TIMER1_OVF_vect(void) __attribute__ ((signal));
+void TIMER1_OVF_vect(void)
+{
+	los_asm_yield_from_tick();
+}
+
+void lsheduler_init(ltask_t *main_ltask)
 {
     ltask_add_to_sheduler(main_ltask);
 }
@@ -31,7 +43,7 @@ void ltask_add_to_sheduler(ltask_t *ltask)
 	}
 }
 
-void context_switch(void)
+void lcontext_switch(void)
 {
     if (current_ltask->next == current_ltask)
         return;
@@ -62,7 +74,7 @@ void ltask_exit(void)
     los_non_savable_yield();
 }
 
-uint8_t *linitialize_stack(uint8_t* top_of_stack, ltask_fn fn)
+uint8_t *linitialize_stack(uint8_t *top_of_stack, ltask_fn fn)
 {
 	uint16_t address = 0;
 
@@ -87,4 +99,17 @@ uint8_t *linitialize_stack(uint8_t* top_of_stack, ltask_fn fn)
 	}
 	
 	return &top_of_stack[-37];
+}
+
+void los_non_savable_yield(void)
+{
+	lcontext_switch();
+	RESTORE_CONTEXT
+}
+
+void los_asm_yield_from_tick(void)
+{
+	SAVE_CONTEXT
+	lcontext_switch();
+	RESTORE_CONTEXT
 }

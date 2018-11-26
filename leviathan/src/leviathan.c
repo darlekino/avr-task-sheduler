@@ -2,19 +2,13 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include "leviathan.h"
-#include "core/mul_tasks/sheduler.h"
-#include "core/mul_tasks/asm.h"
-#include "core/constants.h"
-#include "core/time/timers.h"
+#include "core/sheduler.h"
+#include "core/common/constants.h"
+#include "core/timers.h"
+
+static void os_loop(void);
 
 ltask_t *ltask_os = NULL;
-void main_loop(void);
-
-void TIMER1_OVF_vect(void) __attribute__ ((signal));
-void TIMER1_OVF_vect(void)
-{
-	los_asm_yield_from_tick();
-}
 
 void ltask_run(ltask_fn fn, size_t stack_size)
 {
@@ -33,18 +27,18 @@ void los_init(void)
     init_timer0();
 	init_timer1();
 
-	ltask_os = ltask_create(NULL);
-	sheduler_init(ltask_os);
+	ltask_os = ltask_create(NULL, NULL);
+	lsheduler_init(ltask_os);
 }
 
 void los_run(void)
 {
 	ENABLE_INTERRUPTS
 	
-	for(;;) main_loop();
+	for(;;) os_loop();
 }
 
-void main_loop(void)
+static void os_loop(void)
 {
-	 
+
 }
